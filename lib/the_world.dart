@@ -26,16 +26,17 @@ class TheWorld extends Box2DComponent implements ContactListener {
   TheWorld() : super(dimensions: window.physicalSize, scale: scale, gravity: 0);
 
   static const distanceBetweenBalls = 2.02;
-  static const numberOfBalls = 5;
+  static const numberOfBalls = 1;
+  Vector2 ankerPoint;
 
   Future<void> initializeWorld() async {
     world = World.withGravity(Vector2(0, -10));
     wall = DummyBody(this);
 
-    // add(wall);
+     add(wall);
     initializeBalls();
     impulsTrigger = Timer(Duration(seconds: 3), () {
-      pushBalls(2);
+//      pushBalls(1);
     });
     world.setContactListener(this);
     await Flame.audio.load("billiard-tick.wav");
@@ -46,18 +47,18 @@ class TheWorld extends Box2DComponent implements ContactListener {
         "initializeWorld viewport: ${viewport.width} ${viewport.height} ${window.devicePixelRatio} ");
 
     balls = [];
-    ankerPoints = [];
+    ankerPoint = Vector2(0, 0);
     double x = 0 - (numberOfBalls / 2) * distanceBetweenBalls;
     for (var ix = 0; ix < numberOfBalls; ix++) {
       var ballPosition = Vector2(x, -viewport.height / 2 + 4);
       var ball = BallComponent(this, ballPosition);
       add(ball);
       balls.add(ball);
-      ankerPoints.add(Vector2(x, viewport.height / 2 - 2));
+//      ankerPoints.add(Vector2(x, viewport.height / 2 - 2));
       var djd = DistanceJointDef();
       //djd.frequencyHz = 10.0;
       djd.dampingRatio = 1.0;
-      djd.initialize(wall.body, balls[ix].body, ankerPoints[ix], ballPosition);
+      djd.initialize(wall.body, balls[ix].body, ankerPoint, ballPosition);
       world.createJoint(djd);
       x += distanceBetweenBalls;
     }
@@ -65,7 +66,7 @@ class TheWorld extends Box2DComponent implements ContactListener {
 
   void pushBalls(int count) {
     for (var nn = 0; nn < count; nn++) {
-      balls[nn].impulse(Offset(-0.2, 0.0));
+      balls[nn].impulse(Offset(-0.75, 0.0));
     }
   }
 
@@ -77,19 +78,19 @@ class TheWorld extends Box2DComponent implements ContactListener {
     bgPaint.color = Color(0xff33aa33);
     canvas.drawRect(bgRect, bgPaint);
 
-    Rect barRect = Rect.fromLTRB(
-        worldVector2ToScreenOffset(ankerPoints[0]).dx - 20,
-        20,
-        worldVector2ToScreenOffset(ankerPoints[4]).dx + 20,
-        40);
-    Paint barPaint = Paint();
-    barPaint.color = Color(0xff888888);
-    canvas.drawRect(barRect, barPaint);
+    // Rect barRect = Rect.fromLTRB(
+    //     worldVector2ToScreenOffset(ankerPoints[0]).dx - 20,
+    //     20,
+    //     worldVector2ToScreenOffset(ankerPoints[4]).dx + 20,
+    //     40);
+    // Paint barPaint = Paint();
+    // barPaint.color = Color(0xff888888);
+    // canvas.drawRect(barRect, barPaint);
 
     Paint linePaint = Paint();
     linePaint.color = Color(0xff888888);
     for (var ix = 0; ix < numberOfBalls; ix++) {
-      var p1 = worldVector2ToScreenOffset(ankerPoints[ix]);
+      var p1 = worldVector2ToScreenOffset(ankerPoint);
       var p2 = worldVector2ToScreenOffset(balls[ix].body.position);
       canvas.drawLine(p1, p2, linePaint);
     }

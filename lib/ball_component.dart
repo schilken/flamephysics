@@ -21,7 +21,8 @@ class BallComponent extends BodyComponent with Tapable {
   }
 
   void _loadImages() {
-    images.load("ball", "black-ball-smaller.png");
+//    images.load("ball", "black-ball-smaller.png");
+    images.load("smiley", "icons8-neutral-yellow.png");
   }
 
   Offset worldVector2ToScreenOffset(Vector2 position) {
@@ -38,7 +39,7 @@ class BallComponent extends BodyComponent with Tapable {
     Offset center = worldVector2ToScreenOffset(body.position);
     paintImage(
         canvas: canvas,
-        image: images.get("ball"),
+        image: images.get("smiley"),
         rect: Rect.fromCircle(
             center: center, radius: circle.radius * viewport.scale),
         fit: BoxFit.contain);
@@ -53,7 +54,7 @@ class BallComponent extends BodyComponent with Tapable {
     fixtureDef.shape = shape;
     fixtureDef.restitution = 1.0;
     fixtureDef.density = 0.99;
-    fixtureDef.friction = 0.01;
+    fixtureDef.friction = 0.00;
     fixtureDef.userData = this;
 
     final bodyDef = BodyDef();

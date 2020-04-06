@@ -5,7 +5,7 @@ class DummyBody extends BodyComponent {
 
   DummyBody(Box2DComponent box) : super(box) {
     final shape = PolygonShape();
-    shape.setAsBoxXY(1, 1);
+    shape.setAsBoxXY(.1, .1);
     final fixtureDef = FixtureDef();
     fixtureDef.shape = shape;
     final bodyDef = BodyDef();
