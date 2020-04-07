@@ -26,7 +26,7 @@ class TheWorld extends Box2DComponent implements ContactListener {
   TheWorld() : super(dimensions: window.physicalSize, scale: scale, gravity: 0);
 
   static const distanceBetweenBalls = 2.02;
-  static const numberOfBalls = 1;
+  static const numberOfBalls = 2;
   Vector2 ankerPoint;
 
   Future<void> initializeWorld() async {
@@ -50,7 +50,7 @@ class TheWorld extends Box2DComponent implements ContactListener {
     ankerPoint = Vector2(0, 0);
     double x = 0 - (numberOfBalls / 2) * distanceBetweenBalls;
     for (var ix = 0; ix < numberOfBalls; ix++) {
-      var ballPosition = Vector2(x, -viewport.height / 2 + 4);
+      var ballPosition = Vector2(x, -viewport.height / 2 + 7);
       var ball = BallComponent(this, ballPosition);
       add(ball);
       balls.add(ball);
@@ -66,8 +66,14 @@ class TheWorld extends Box2DComponent implements ContactListener {
 
   void pushBalls(int count) {
     for (var nn = 0; nn < count; nn++) {
-      balls[nn].impulse(Offset(-0.75, 0.0));
+      balls[nn].impulse(Offset(-1.25, 0.0));
     }
+  }
+
+  @override
+  void update(t) {
+    super.update(t);
+//    cameraFollow(balls[0], horizontal: 0.5, vertical: 0.5);
   }
 
   @override
