@@ -40,21 +40,35 @@ class BallComponent extends BodyComponent with Tapable {
         (viewport.height / 2 - position.y) * 20);
   }
 
-  void render(Canvas canvas) {
+  @override
+  void renderCircle(Canvas canvas, Offset center, double radius) {
     if (images.isLoading) {
       return;
     }
-    Fixture fixture = body.getFixtureList();
-    final CircleShape circle = fixture.getShape();
-    Offset center = worldVector2ToScreenOffset(body.position);
+    var image = images.get("smiley$id");
     paintImage(
         canvas: canvas,
-        image: images.get("smiley$id"),
-        rect: Rect.fromCircle(
-            center: center, radius: circle.radius * viewport.scale),
+        image: image,
+        rect: Rect.fromCircle(center: center, radius: radius),
+        flipHorizontally: false,
         fit: BoxFit.contain);
-    renderDebugMode(canvas);    
   }
+
+  // void render(Canvas canvas) {
+  //   if (images.isLoading) {
+  //     return;
+  //   }
+  //   Fixture fixture = body.getFixtureList();
+  //   final CircleShape circle = fixture.getShape();
+  //   Offset center = worldVector2ToScreenOffset(body.position);
+  //   paintImage(
+  //       canvas: canvas,
+  //       image: images.get("smiley$id"),
+  //       rect: Rect.fromCircle(
+  //           center: center, radius: circle.radius * viewport.scale),
+  //       fit: BoxFit.contain);
+  //   renderDebugMode(canvas);    
+  // }
 
   void _createBody(Vector2 position) {
     final shape = CircleShape();
