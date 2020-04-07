@@ -15,7 +15,7 @@ class BallComponent extends BodyComponent with Tapable {
   static const num PERSON_RADIUS = 1.0;
   double x = 0.0, y = 0.0, angle = 0.0;
   double width = 150.0, height = 20.0;
-  Color get debugColor => const Color(0xFFFF00FF);
+  Color get debugColor => const Color(0xFF444444);
   Paint get _debugPaint => Paint()
     ..color = debugColor
     ..style = PaintingStyle.stroke;
@@ -23,15 +23,16 @@ class BallComponent extends BodyComponent with Tapable {
 
   ImagesLoader images = ImagesLoader();
   Timer impulsTrigger;
+  int id;
 
-  BallComponent(box2d, Vector2 position) : super(box2d) {
+  BallComponent(box2d, Vector2 position, this.id) : super(box2d) {
     _loadImages();
     _createBody(position);
   }
 
   void _loadImages() {
-//    images.load("ball", "black-ball-smaller.png");
-    images.load("smiley", "icons8-neutral-yellow.png");
+    images.load("smiley0", "icons8-neutral-transparent.png");
+    images.load("smiley1", "icons8-neutral-yellow.png");
   }
 
   Offset worldVector2ToScreenOffset(Vector2 position) {
@@ -48,7 +49,7 @@ class BallComponent extends BodyComponent with Tapable {
     Offset center = worldVector2ToScreenOffset(body.position);
     paintImage(
         canvas: canvas,
-        image: images.get("smiley"),
+        image: images.get("smiley$id"),
         rect: Rect.fromCircle(
             center: center, radius: circle.radius * viewport.scale),
         fit: BoxFit.contain);

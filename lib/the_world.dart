@@ -51,10 +51,9 @@ class TheWorld extends Box2DComponent implements ContactListener {
     double x = 0 - (numberOfBalls / 2) * distanceBetweenBalls;
     for (var ix = 0; ix < numberOfBalls; ix++) {
       var ballPosition = Vector2(x, -viewport.height / 2 + 7);
-      var ball = BallComponent(this, ballPosition);
+      var ball = BallComponent(this, ballPosition, ix);
       add(ball);
       balls.add(ball);
-//      ankerPoints.add(Vector2(x, viewport.height / 2 - 2));
       var djd = DistanceJointDef();
       //djd.frequencyHz = 10.0;
       djd.dampingRatio = 1.0;
@@ -83,15 +82,6 @@ class TheWorld extends Box2DComponent implements ContactListener {
     Paint bgPaint = Paint();
     bgPaint.color = Color(0xff33aa33);
     canvas.drawRect(bgRect, bgPaint);
-
-    // Rect barRect = Rect.fromLTRB(
-    //     worldVector2ToScreenOffset(ankerPoints[0]).dx - 20,
-    //     20,
-    //     worldVector2ToScreenOffset(ankerPoints[4]).dx + 20,
-    //     40);
-    // Paint barPaint = Paint();
-    // barPaint.color = Color(0xff888888);
-    // canvas.drawRect(barRect, barPaint);
 
     Paint linePaint = Paint();
     linePaint.color = Color(0xff888888);
