@@ -7,6 +7,7 @@ import 'package:flame/box2d/box2d_component.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/position.dart';
 import 'package:flame/text_config.dart';
+import 'package:flame/box2d/viewport.dart' as box2d_viewport;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -26,26 +27,39 @@ class TheWorld extends Box2DComponent implements ContactListener {
   bool showWorldInfo = false;
   Timer impulsTrigger;
   var numberOfBalls = 3;
-  static const double scale = 20.0;
+  double scale = 20.0;
 
   TheWorld({this.numberOfBalls})
       : super(
             dimensions: window.physicalSize / window.devicePixelRatio,
-            scale: scale,
+            scale: 20.0,
             gravity: 0);
 
   static const distanceBetweenBalls = 2.02;
   Vector2 ankerPoint;
 
-  Future<void> initializeWorld() async {
+  Future<void> initializeWorldWithScale(double scale) async {
+    this.scale = scale;
     world = World.withGravity(Vector2(0, -10));
+    viewport = box2d_viewport.Viewport(window.physicalSize / window.devicePixelRatio, scale);
     wall = DummyBody(this);
 
     add(wall);
     initializeBalls();
-    impulsTrigger = Timer(Duration(seconds: 3), () {
+    world.setContactListener(this);
+    await Flame.audio.load("billiard-tick.wav");
+  }
+
+  Future<void> initializeWorld() async {
+    world = World.withGravity(Vector2(0, -10));
+    viewport = box2d_viewport.Viewport(window.physicalSize / window.devicePixelRatio, scale);
+    wall = DummyBody(this);
+
+    add(wall);
+    initializeBalls();
+//    impulsTrigger = Timer(Duration(seconds: 3), () {
 //      pushBalls(1);
-    });
+//    });
     world.setContactListener(this);
     await Flame.audio.load("billiard-tick.wav");
   }
@@ -107,7 +121,8 @@ class TheWorld extends Box2DComponent implements ContactListener {
       debugTextConfig.render(
           canvas,
           "window.physicalSize ${window.physicalSize}\n"
-          "window.devicePixelRatio: ${window.devicePixelRatio} \n"
+          "window.devicePixelRatio: ${window.devicePixelRatio}\n"
+          "scale: $scale\n"
           "viewport width:${viewport.width.toStringAsFixed(2)} height:${viewport.height.toStringAsFixed(2)}\n"
           "screen: ${bgRect}\n"
           "viewport.size: ${viewport.size}\n"

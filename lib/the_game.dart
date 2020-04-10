@@ -17,6 +17,7 @@ class TheGame extends BaseGame with TapDetector, HasWidgetsOverlay {
   TheWorld theWorld;
   bool debounceActive = false;
   var numberOfBalls = 2;
+  var scale = 20.0;
 
   TheGame() {
     addWidgetOverlay(
@@ -27,7 +28,6 @@ class TheGame extends BaseGame with TapDetector, HasWidgetsOverlay {
             alignment: Alignment.bottomRight,
             child: PopupMenuButton<MenuEntry>(
               onSelected: (MenuEntry result) async {
-                print("onSelected $result");
                 switch (result) {
                   case MenuEntry.toggleWorldInfo:
                     theWorld?.toggleShowWorldInfo();
@@ -43,10 +43,15 @@ class TheGame extends BaseGame with TapDetector, HasWidgetsOverlay {
                     await theWorld.initializeWorld();
                     break;
                   case MenuEntry.increaseScale:
-                    // TODO: Handle this case.
+                    scale += 5;
+                    theWorld = TheWorld(numberOfBalls: numberOfBalls);
+                    await theWorld.initializeWorldWithScale(scale);
                     break;
                   case MenuEntry.decreaseScale:
-                    // TODO: Handle this case.
+                    scale -= 5;
+                    if(scale < 1) { scale = 1; }
+                    theWorld = TheWorld(numberOfBalls: numberOfBalls);
+                    await theWorld.initializeWorldWithScale(scale);
                     break;
                 }
               },
