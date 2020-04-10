@@ -47,7 +47,7 @@ class BallComponent extends BodyComponent with Tapable {
     if (images.isLoading) {
       return;
     }
-    var image = images.get("smiley$id");
+    var image = images.get("smiley${id % 4}");
     paintImage(
         canvas: canvas,
         image: image,
