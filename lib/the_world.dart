@@ -71,8 +71,10 @@ class TheWorld extends Box2DComponent implements ContactListener {
     ankerPoint = Vector2(0, 0);
     double x = 0 - (numberOfBalls / 2) * distanceBetweenBalls;
     var distanceToEdge = min(viewport.width, viewport.height) / 2;
+    final ropeLength = distanceToEdge - distanceToEdge / 5;
     for (var ix = 0; ix < numberOfBalls; ix++) {
-      var ballPosition = Vector2(x, -distanceToEdge + distanceToEdge / 5);
+      var y = sqrt(ropeLength*ropeLength - x*x);
+      var ballPosition = Vector2(x, -y);
       var ball = BallComponent(this, ballPosition, ix);
       add(ball);
       balls.add(ball);
