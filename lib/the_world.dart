@@ -15,7 +15,6 @@ import 'ball_component.dart';
 import 'dummy_body.dart';
 
 class TheWorld extends Box2DComponent implements ContactListener {
-  static const double scale = 20.0;
   World world;
 
   List<BallComponent> balls;
@@ -26,14 +25,16 @@ class TheWorld extends Box2DComponent implements ContactListener {
       TextConfig(color: Color(0xFF444444), fontSize: 14);
   bool showWorldInfo = false;
   Timer impulsTrigger;
-  TheWorld()
+  var numberOfBalls = 3;
+  static const double scale = 20.0;
+
+  TheWorld({this.numberOfBalls})
       : super(
             dimensions: window.physicalSize / window.devicePixelRatio,
             scale: scale,
             gravity: 0);
 
   static const distanceBetweenBalls = 2.02;
-  static const numberOfBalls = 3;
   Vector2 ankerPoint;
 
   Future<void> initializeWorld() async {
@@ -138,6 +139,10 @@ class TheWorld extends Box2DComponent implements ContactListener {
     balls.forEach((ball) {
       ball.stop();
     });
+    
+  }
+
+  void toggleShowWorldInfo() {
     showWorldInfo = !showWorldInfo;
   }
 
