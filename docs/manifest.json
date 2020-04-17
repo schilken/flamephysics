@@ -2,7 +2,7 @@
     "name": "FlamePhysics2",
     "short_name": "FlamePhysics2",
     "start_url": ".",
-    "display": "minimal-ui",
+    "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
     "description": "Flutter Flame and Box2D.",
