@@ -1,4 +1,6 @@
 import 'dart:async';
+//import 'dart:html' as html;
+import 'dart:js' as js;
 import 'dart:math';
 import 'dart:ui';
 
@@ -8,15 +10,18 @@ import 'package:flame/flame.dart';
 import 'package:flame/position.dart';
 import 'package:flame/text_config.dart';
 import 'package:flame/box2d/viewport.dart' as box2d_viewport;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 import 'ball_component.dart';
 import 'dummy_body.dart';
 
 class TheWorld extends Box2DComponent implements ContactListener {
   World world;
+  AudioPlayer fixedPlayer;
 
   List<BallComponent> balls;
   List<Vector2> ankerPoints;
@@ -41,18 +46,22 @@ class TheWorld extends Box2DComponent implements ContactListener {
   Future<void> initializeWorldWithScale(double scale) async {
     this.scale = scale;
     world = World.withGravity(Vector2(0, -10));
-    viewport = box2d_viewport.Viewport(window.physicalSize / window.devicePixelRatio, scale);
+    viewport = box2d_viewport.Viewport(
+        window.physicalSize / window.devicePixelRatio, scale);
     wall = DummyBody(this);
 
     add(wall);
     initializeBalls();
     world.setContactListener(this);
-    await Flame.audio.load("billiard-tick.wav");
+    if (!kIsWeb) {
+      await Flame.audio.load("billiard-tick.wav");
+    }
   }
 
   Future<void> initializeWorld() async {
     world = World.withGravity(Vector2(0, -10));
-    viewport = box2d_viewport.Viewport(window.physicalSize / window.devicePixelRatio, scale);
+    viewport = box2d_viewport.Viewport(
+        window.physicalSize / window.devicePixelRatio, scale);
     wall = DummyBody(this);
 
     add(wall);
@@ -61,7 +70,9 @@ class TheWorld extends Box2DComponent implements ContactListener {
 //      pushBalls(1);
 //    });
     world.setContactListener(this);
-    await Flame.audio.load("billiard-tick.wav");
+    if (!kIsWeb) {
+      await Flame.audio.load("billiard-tick.wav");
+    }
   }
 
   void initializeBalls() {
@@ -73,7 +84,7 @@ class TheWorld extends Box2DComponent implements ContactListener {
     var distanceToEdge = min(viewport.width, viewport.height) / 2;
     final ropeLength = distanceToEdge - distanceToEdge / 5;
     for (var ix = 0; ix < numberOfBalls; ix++) {
-      var y = sqrt(ropeLength*ropeLength - x*x);
+      var y = sqrt(ropeLength * ropeLength - x * x);
       var ballPosition = Vector2(x, -y);
       var ball = BallComponent(this, ballPosition, ix);
       add(ball);
@@ -156,11 +167,32 @@ class TheWorld extends Box2DComponent implements ContactListener {
     balls.forEach((ball) {
       ball.stop();
     });
-    
   }
 
   void toggleShowWorldInfo() {
     showWorldInfo = !showWorldInfo;
+  }
+
+  AudioPlayer _player(PlayerMode mode) {
+    return fixedPlayer ?? new AudioPlayer(mode: mode);
+  }
+
+  Future<AudioPlayer> playForWeb(String fileName,
+      {double volume = 1.0,
+      PlayerMode mode = PlayerMode.MEDIA_PLAYER,
+      bool stayAwake}) async {
+    //var baseUrl = html.window.location.href; // this didn't work
+    String baseUrl = js.context['location']['href'];
+    var url = baseUrl.replaceFirst('#/', 'assets/assets/audio/$fileName');
+    print("baseUrl: $baseUrl, url: $url");
+    AudioPlayer player = _player(mode);
+    await player.play(
+      url,
+      volume: volume,
+      respectSilence: false,
+      stayAwake: stayAwake,
+    );
+    return player;
   }
 
   @override
@@ -174,7 +206,11 @@ class TheWorld extends Box2DComponent implements ContactListener {
     if (vDiff.length2 > 3) {
       var volume = min(vDiff.length2 / 1000, 1.0);
       //print("${vA.length2} ${vB.length2} ${vDiff.length2} $volume");
-      Flame.audio.play("billiard-tick.wav", volume: volume);
+      if (!kIsWeb) {
+        Flame.audio.play("billiard-tick.wav", volume: volume);
+      } else {
+        playForWeb("billiard-tick.wav", volume: volume);
+      }
     }
   }
 
