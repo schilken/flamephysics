@@ -177,10 +177,13 @@ class TheWorld extends Box2DComponent implements ContactListener {
   }
 
   AudioPlayer _player(PlayerMode mode) {
-    return fixedPlayer ?? new AudioPlayer(mode: mode);
+    if(fixedPlayer == null) {
+      fixedPlayer = AudioPlayer(mode: mode);
+    }
+    return fixedPlayer;
   }
 
-  Future<AudioPlayer> playForWeb(String fileName,
+  Future<void> playForWeb(String fileName,
       {double volume = 1.0,
       PlayerMode mode = PlayerMode.MEDIA_PLAYER,
       bool stayAwake}) async {
@@ -196,7 +199,6 @@ class TheWorld extends Box2DComponent implements ContactListener {
       respectSilence: false,
       stayAwake: stayAwake,
     );
-    return player;
   }
 
   @override
