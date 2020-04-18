@@ -22,6 +22,7 @@ import 'dummy_body.dart';
 class TheWorld extends Box2DComponent implements ContactListener {
   World world;
   AudioPlayer fixedPlayer;
+  String logMessage = "-";
 
   List<BallComponent> balls;
   List<Vector2> ankerPoints;
@@ -140,6 +141,7 @@ class TheWorld extends Box2DComponent implements ContactListener {
           "screen: ${bgRect}\n"
           "viewport.size: ${viewport.size}\n"
           "viewport.extents: ${viewport.extents}\n"
+          "logMessage: $logMessage\n"
           "viewport.center: ${viewport.center}",
           Position(10, 30));
     }
@@ -169,8 +171,9 @@ class TheWorld extends Box2DComponent implements ContactListener {
     });
   }
 
-  void toggleShowWorldInfo() {
+  void toggleShowWorldInfo() async {
     showWorldInfo = !showWorldInfo;
+    await playForWeb("billiard-tick.wav");
   }
 
   AudioPlayer _player(PlayerMode mode) {
@@ -184,7 +187,8 @@ class TheWorld extends Box2DComponent implements ContactListener {
     //var baseUrl = html.window.location.href; // this didn't work
     String baseUrl = js.context['location']['href'];
     var url = baseUrl.replaceFirst('#/', 'assets/assets/audio/$fileName');
-    print("baseUrl: $baseUrl, url: $url");
+    logMessage = "baseUrl: $baseUrl, url: $url";
+    print(logMessage);
     AudioPlayer player = _player(mode);
     await player.play(
       url,
@@ -209,7 +213,7 @@ class TheWorld extends Box2DComponent implements ContactListener {
       if (!kIsWeb) {
         Flame.audio.play("billiard-tick.wav", volume: volume);
       } else {
-        playForWeb("billiard-tick.wav", volume: volume);
+        await playForWeb("billiard-tick.wav", volume: volume);
       }
     }
   }
