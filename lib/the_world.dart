@@ -15,6 +15,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/services.dart';
+import 'package:soundpool/soundpool.dart';
 
 import 'ball_component.dart';
 import 'dummy_body.dart';
@@ -34,6 +36,8 @@ class TheWorld extends Box2DComponent implements ContactListener {
   Timer impulsTrigger;
   var numberOfBalls = 3;
   double scale = 20.0;
+  Soundpool _soundpool = Soundpool(streamType: StreamType.notification);
+  int _soundId;
 
   TheWorld({this.numberOfBalls})
       : super(
@@ -56,6 +60,11 @@ class TheWorld extends Box2DComponent implements ContactListener {
     world.setContactListener(this);
     if (!kIsWeb) {
       await Flame.audio.load("billiard-tick.wav");
+    } else {
+      _soundId = await rootBundle.load("assets/audio/billiard-tick.wav").then((ByteData soundData) {
+                  return _soundpool.load(soundData);
+                });
+      print("_soundId: $_soundId");          
     }
   }
 
@@ -73,6 +82,11 @@ class TheWorld extends Box2DComponent implements ContactListener {
     world.setContactListener(this);
     if (!kIsWeb) {
       await Flame.audio.load("billiard-tick.wav");
+    } else {
+      _soundId = await rootBundle.load("assets/audio/billiard-tick.wav").then((ByteData soundData) {
+                  return _soundpool.load(soundData);
+                });
+      print("_soundId: $_soundId");          
     }
   }
 
@@ -193,6 +207,7 @@ class TheWorld extends Box2DComponent implements ContactListener {
     logMessage = "baseUrl: $baseUrl, url: $url";
     print(logMessage);
     AudioPlayer player = _player(mode);
+    
     await player.play(
       url,
       volume: volume,
@@ -215,7 +230,9 @@ class TheWorld extends Box2DComponent implements ContactListener {
       if (!kIsWeb) {
         Flame.audio.play("billiard-tick.wav", volume: volume);
       } else {
-        await playForWeb("billiard-tick.wav", volume: volume);
+        await _soundpool.setVolume(soundId: _soundId, volume: volume);
+        await _soundpool.play(_soundId);
+        //await playForWeb("billiard-tick.wav", volume: volume);
       }
     }
   }
