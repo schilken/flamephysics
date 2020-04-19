@@ -11,7 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'the_world.dart';
 
 // This is the type used by the popup menu below.
-enum MenuEntry { toggleWorldInfo, addBall, removeBall, increaseScale, decreaseScale }
+enum MenuEntry { toggleWorldInfo, addBall, removeBall, increaseScale, decreaseScale, enableSound }
 
 class TheGame extends BaseGame with TapDetector, HasWidgetsOverlay {
   TheWorld theWorld;
@@ -53,10 +53,17 @@ class TheGame extends BaseGame with TapDetector, HasWidgetsOverlay {
                     theWorld = TheWorld(numberOfBalls: numberOfBalls);
                     await theWorld.initializeWorldWithScale(scale);
                     break;
+                  case MenuEntry.enableSound:
+                    await theWorld?.enableSound();
+                    break;
                 }
               },
               itemBuilder: (BuildContext context) =>
                   <PopupMenuEntry<MenuEntry>>[
+                const PopupMenuItem<MenuEntry>(
+                  value: MenuEntry.enableSound,
+                  child: Text('Enable Sound'),
+                ),
                 const PopupMenuItem<MenuEntry>(
                   value: MenuEntry.toggleWorldInfo,
                   child: Text('Toggle World Info'),

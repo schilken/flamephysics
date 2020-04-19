@@ -187,7 +187,6 @@ class TheWorld extends Box2DComponent implements ContactListener {
 
   void toggleShowWorldInfo() async {
     showWorldInfo = !showWorldInfo;
-    await playForWeb("billiard-tick.wav");
   }
 
   AudioPlayer _player(PlayerMode mode) {
@@ -245,4 +244,8 @@ class TheWorld extends Box2DComponent implements ContactListener {
 
   @override
   void preSolve(Contact contact, Manifold oldManifold) {}
+
+  Future<void> enableSound() async {
+    await playForWeb("billiard-tick.wav");
+  }
 }
